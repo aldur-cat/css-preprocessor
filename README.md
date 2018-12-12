@@ -7,13 +7,7 @@ webpack기반의 (SA/SC/C)SS 전처리 장치
 npm i
 ```
 
-## Run dev
-
-```bash
-npm run dev
-```
-
-## Extract css files
+## Extract assets files
 
 ```bash
 npm run build
