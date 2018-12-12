@@ -3,74 +3,133 @@
  */
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const cssnano = require('cssnano');
+const cssDeclarationSorter = require('css-declaration-sorter');
 const autoprefixer = require('autoprefixer');
 
 /**
- * 개발모드, 프로덕션모드 구분
+ * 프로젝트 각종 폴더 경로 설정
  */
-const devMode = process.env.NODE_ENV !== 'production';
-
-/**
- * 프로젝트 폴더 경로와 SCSS 폴더 경로 기입
- */
-const PROJECT_FOLDER_URL = './' // 입력 필요
-const SCSS_ASSETS_FOLDER_URL = 'scss' // 입력 필요
+const PROJECT_FOLDER = '';
+const BUNDLE_SCRIPT_FOLDER = 'js-dev';
+const ASSETS_FOLDER = 'src';
 
 /**
  * 기본 프로젝트 url 설정
  */
-const projectBaseUrl = path.resolve(__dirname, PROJECT_FOLDER_URL);
-const scssBaseUrl = path.resolve(projectBaseUrl, SCSS_ASSETS_FOLDER_URL);
+const projectBasePath = path.resolve(__dirname, PROJECT_FOLDER);
+const assetsBasePath = path.resolve(projectBasePath, ASSETS_FOLDER);
 
-module.exports = {
-  /**
-   * 입력받을 파일 지정
-   * (SA/SC/C)SS를 참조하는 js파일 나열
-   */
-  entry: {
-    sample: path.resolve(scssBaseUrl, 'sample.js')  // key값을 파일명으로 활용, resolve 두번째 인자가 번들js 대상
-  },
-  output: {
-    path: projectBaseUrl,
-    filename: './js-dev/[name].js', 
-    publicPath: '/'
-  },
-  optimization: {
-    minimizer: [
-      // new OptimizeCSSAssetsPlugin({})  // minify 결과물을 원한다면 주석 제거
-    ]
-  },
-  plugins: [
-    new MiniCssExtractPlugin({
-      filename: './css/[name].css', 
-      chunkFilename: './css/[id].css'
-    })
-  ],
-  module: {
-    rules: [
-      devMode ? 
-      {
-        test: /\.(png|jpg|gif|svg)$/i,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[path][name].[ext]'
+module.exports = (env, options) => {
+  const config = {
+    mode: 'none',
+    entry: {
+      sample: path.resolve(assetsBasePath, 'scss', 'sample.scss')
+    },
+    output: {
+      path: projectBasePath,
+      filename: `./${ASSETS_FOLDER}/${BUNDLE_SCRIPT_FOLDER}/[name].js`,
+      publicPath: '/'
+    },
+    optimization: {
+      minimizer: [
+        
+      ]
+    },
+    plugins: [
+      new MiniCssExtractPlugin({
+        filename: './css/[name].css', 
+        chunkFilename: './css/[id].css'
+      })
+    ],
+    module: {
+      rules: [
+        {
+          test: /\.(sa|sc|c)ss$/,
+          use: [
+            { 
+              loader: MiniCssExtractPlugin.loader, 
+              options: { 
+                publicPath: '../'
+              } 
+            },
+            { 
+              loader: 'css-loader', 
+              options: { 
+                sourceMap: true
+              } 
+            },
+            { 
+              loader: 'postcss-loader',
+              options: {
+                sourceMap: true,
+                plugins: () => [ 
+                  cssnano({
+                    preset: ['default', {
+                      discardComments: false,
+                      minifyFontValues: false,
+                      normalizeWhitespace: false
+                    }]
+                  }),
+                  cssDeclarationSorter({
+                    order: 'smacss'
+                  }),
+                  autoprefixer()
+                ]
+              }
+            },
+            { 
+              loader: 'sass-loader',
+              options: {
+                sourceMap: true
+              }
             }
-          }
-        ]
-      } : 
-      {},
-      {
-        test: /\.(sa|sc|c)ss$/,
-        use: [
-          devMode ? { loader: 'style-loader', options: { sourceMap: true, convertToAbsoluteUrls: false }} : MiniCssExtractPlugin.loader,
-          { loader: 'css-loader', options: { url: devMode ? true : false, sourceMap: true } },
-          { loader: 'postcss-loader', options: { plugins: () => [ autoprefixer() ] } },
-          'sass-loader'
-        ]
-      }
-    ]
+          ]
+        },
+        {
+          test: /\.(png|jpe?g|gif|svg|ico)$/,
+          use: [
+            {
+              loader: 'url-loader',
+              options: {
+                name: '[name].[ext]?[hash:7]',
+                useRelativePath: true,
+                outputPath: '',
+                limit: 10000
+              }
+            }
+          ]
+        },
+        {
+          test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)?$/,
+          use: [
+            {
+              loader: 'url-loader',
+              options: {
+                name: '[name].[ext]?[hash:7]',
+                useRelativePath: true,
+                outputPath: '',
+                limit: 10000
+              }
+            }
+          ]
+        },
+        {
+          test: /\.(woff2?|eot|ttf|otf)$/,
+          use: [
+            {
+              loader: 'url-loader',
+              options: {
+                name: '[name].[ext]?[hash:7]',
+                useRelativePath: true,
+                outputPath: '',
+                limit: 10000
+              }
+            }
+          ]
+        }
+      ]
+    }
   }
+  return config;
 }
