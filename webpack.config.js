@@ -67,7 +67,6 @@ module.exports = (env, options) => {
                   cssnano({
                     preset: ['default', {
                       discardComments: false,
-                      minifyFontValues: false,
                       normalizeWhitespace: false
                     }]
                   }),

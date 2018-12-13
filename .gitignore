@@ -62,5 +62,5 @@ typings/
 .next
 
 ### 추가
-/js-dev
+src/js-dev/
 .vscode

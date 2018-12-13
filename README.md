@@ -7,7 +7,7 @@ webpack기반의 (SA/SC/C)SS 전처리 장치
 npm i
 ```
 
-## Extract assets files
+## Extract Assets files
 
 ```bash
 npm run build
@@ -37,7 +37,7 @@ postcss 기능 활용이 가능하므로 적용하고 싶은 플러그인이 있
 - scss폴더도 만들어 css폴더 하위의 파일들을 복사하여 넣어줍니다. (경로 수정가능)
 - 트랜스파일링할 style파일은 (SA/SC/C)SS 어느것이든 상관없습니다.
 - 기존 css파일을 그대로 가져와서 postCSS의 다양한 기능을 적용하여 추출할 수도 있고 scss파일로 확장자를 변경하고 특정 요소들을 변수화 하여 사용하는 등 원하시는 작업 방식대로 활용가능합니다.
-- postCSS의 기본 설정은 autoprefix, cssnano, css-declaration-sorter가 적용되어 있습니다.
+- postCSS 플러그인 설정은 autoprefix, cssnano, css-declaration-sorter가 기본 적용되어 있습니다.
 
 ```bash
 ├── css
