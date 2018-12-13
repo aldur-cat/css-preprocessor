@@ -67,7 +67,6 @@ module.exports = (env, options) => {
                   cssnano({
                     preset: ['default', {
                       discardComments: false,
-                      minifyFontValues: false,
                       normalizeWhitespace: false
                     }]
                   }),
@@ -81,7 +80,8 @@ module.exports = (env, options) => {
             { 
               loader: 'sass-loader',
               options: {
-                sourceMap: true
+                sourceMap: true,
+                outputStyle: 'expanded'
               }
             }
           ]
