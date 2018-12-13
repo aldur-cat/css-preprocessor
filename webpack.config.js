@@ -80,7 +80,8 @@ module.exports = (env, options) => {
             { 
               loader: 'sass-loader',
               options: {
-                sourceMap: true
+                sourceMap: true,
+                outputStyle: 'expanded'
               }
             }
           ]
